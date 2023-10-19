@@ -4,6 +4,7 @@ SUBDIRS:=$(foreach DIR,$(shell find . -maxdepth 2 -mindepth 1 -name "go.mod" -ex
 TARGETS:=$(filter-out $(IGNORE),$(SUBDIRS))
 
 GO_MOD_TIDY_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-mod-tidy-vendor.$(DIR),$(DIR)))
+GO_MOD_VERIFY_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-mod-verify-vendor.$(DIR),$(DIR)))
 GO_BUILD_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-build.$(DIR),$(DIR)))
 GO_CLEAN_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-clean.$(DIR),$(DIR)))
 
@@ -47,3 +48,10 @@ go-clean-providers:
 
 .PHONY: clean
 clean: go-clean
+
+.PHONY: go-mod-verify-vendor
+go-mod-verify-vendor: go-mod-tidy-vendor $(GO_MOD_VERIFY_TARGETS)
+	git diff --exit-code
+
+$(GO_MOD_VERIFY_TARGETS): go-mod-verify-vendor.%:
+	cd $* && go mod verify
