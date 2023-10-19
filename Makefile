@@ -1,6 +1,7 @@
 TARGET_OS_ARCH:=$(shell go env GOOS)_$(shell go env GOARCH)
 
-SUBDIRS:=$(foreach DIR,$(shell find . -maxdepth 1 -mindepth 1 -type d \( -path ./bin -o -path ./.git \) -prune -o -type d -print), $(subst ./,,$(DIR)))
+SUBDIRS:=$(foreach DIR,$(shell find . -maxdepth 2 -mindepth 1 -name "go.mod" -exec dirname {} \;), $(subst ./,,$(DIR)))
+TARGETS:=$(filter-out $(IGNORE),$(SUBDIRS))
 
 GO_MOD_TIDY_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-mod-tidy-vendor.$(DIR),$(DIR)))
 GO_BUILD_TARGETS:=$(foreach DIR,$(SUBDIRS), $(subst $(DIR),go-build.$(DIR),$(DIR)))
