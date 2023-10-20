@@ -1,4 +1,4 @@
-module github.com/openshift/terraform-providers/aws
+module github.com/r4f4/terraform-providers/aws
 
 go 1.20
 
